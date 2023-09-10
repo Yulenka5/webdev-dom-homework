@@ -2,7 +2,7 @@ import { postTodo, token } from "./api.js";
 import { getDateApi, clickLike } from "./main.js";
 import { renderLogin } from "./renderlogin.js";
 
-
+// 
 export const renderComments = ({ comments, clickLike }) => {
   const appElement = document.getElementById("app");
   const commentsHtml = comments
