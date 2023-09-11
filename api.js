@@ -2,6 +2,12 @@ const todosUrl = "https://wedev-api.sky.pro/api/v2/yulenka/comments";
 const userUrl = "https://wedev-api.sky.pro/api/user/login";
 const regUserUrl = "https://wedev-api.sky.pro/api/user";
 
+export let userName;
+
+export const setUserName = (newName) => {
+  userName = newName;
+};
+
 export let token;
 
 export const setToken = (newToken) => {

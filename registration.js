@@ -1,7 +1,6 @@
-import { regLogin, setToken } from "./api.js";
+import { regLogin, setToken, setUserName, token, userName } from "./api.js";
 
 import { getDateApi } from "./main.js";
-
 import { renderLogin } from "./renderlogin.js";
 
 export const renderRegictration = () => {
@@ -9,25 +8,32 @@ export const renderRegictration = () => {
   const regHtml = `<div class="container">
   <div class="add-form add-form-input">
   <h1>Форма регистрации</h1>
+  <form class="login-form">
     <input
       value=""
       type="text"
       class="add-form-name input-form"
       id="reg-name"
       placeholder="Введите имя"
+      autocomplete="username"
     />
     <input
       id="reg-login"
+      type="text"
       value=""
       class="add-form-name input-form"
       placeholder="Введите логин"
+      autocomplete="username"
     />
     <input
       id="reg-password"
+      type="password"
       value=""
       class="add-form-name input-form"
       placeholder="Введите пароль"
+      autocomplete="current-password"
     />
+    </form>
     <div class="btn-form">
     <div class="add-form-row">
       <button class="add-form-button" id="return-button">Войти</button>
@@ -44,7 +50,7 @@ export const renderRegictration = () => {
   const regNameInputElement = document.getElementById("reg-name");
   const regLoginInputElement = document.getElementById("reg-login");
   const regPasswordInputElement = document.getElementById("reg-password");
-  const returnButtonElement = document.getElementById('return-button');
+  const returnButtonElement = document.getElementById("return-button");
 
   regButtonElement.addEventListener("click", () => {
     regLogin({
@@ -53,16 +59,14 @@ export const renderRegictration = () => {
       password: regPasswordInputElement.value,
     }).then((responseData) => {
       setToken(responseData.user.token);
-
-      console.log(responseData.user);
-
+      setUserName(responseData.user.name);
       setTimeout(() => {
         getDateApi();
       }, 2000);
     });
   });
 
-  returnButtonElement.addEventListener('click', ()=> {
-regLogin({ getDateApi });
+  returnButtonElement.addEventListener("click", () => {
+    renderLogin({ getDateApi });
   });
 };

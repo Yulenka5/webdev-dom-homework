@@ -1,8 +1,7 @@
-import { postTodo, token } from "./api.js";
-import { getDateApi, clickLike } from "./main.js";
+import { postTodo, token, userName } from "./api.js";
+import { getDateApi } from "./main.js";
 import { renderLogin } from "./renderlogin.js";
 
-// 
 export const renderComments = ({ comments, clickLike }) => {
   const appElement = document.getElementById("app");
   const commentsHtml = comments
@@ -14,7 +13,8 @@ export const renderComments = ({ comments, clickLike }) => {
         <div class="comment-header">
           <div id="comment-name">${comment.name}</div>
           <div id="comment-data">${
-            comment.date ? new Date(comment.date).toLocaleString() : ""}
+            comment.date ? new Date(comment.date).toLocaleString() : ""
+          }
             </div>
         </div>
         <div class="comment-body">
@@ -51,7 +51,9 @@ export const renderComments = ({ comments, clickLike }) => {
         <div class="preloader">
           <p>Ждём, комментарий добавляется...</p>
         </div>
-        ${ token ? `<div class="add-form" id="input-list">
+        ${
+          token
+            ? `<div class="add-form" id="input-list">
           <input
             id="name-input"
             value=""
@@ -73,14 +75,13 @@ export const renderComments = ({ comments, clickLike }) => {
               Удалить последний комментарий
             </button>
           </div>
-        </div>` : `<div class="add-form-auto">Чтобы добавить комментарий, <a href="#" class="link-auto" id="link-auto"> авторизуйтесь</a></div>`}
+        </div>`
+            : `<div class="add-form-auto">Чтобы добавить комментарий, <a href="#" class="link-auto" id="link-auto"> авторизуйтесь</a></div>`
+        }
       </div>`;
 
   appElement.innerHTML = appHtml;
 
-  const buttonElement = document.getElementById("add-button");
-  const nameInputElement = document.getElementById("name-input");
-  const commentInputElement = document.getElementById("comment-input");
   const newButton = document.getElementById("new-button");
   const inputList = document.getElementById("input-list");
   const preloader = document.querySelector(".preloader");
@@ -93,103 +94,132 @@ export const renderComments = ({ comments, clickLike }) => {
 
   buttonLikes.forEach((button) => {
     button.addEventListener("click", clickLike);
-
-  autoRegistration.addEventListener("click", ()=> {
-renderLogin({ getDateApi });
-  })
   });
-if (token) {
-  const commentElements = document.querySelectorAll(".comment");
 
-  for (const commentElement of commentElements) {
-    commentElement.addEventListener("click", () => {
-      const index = commentElement.dataset.test;
-      commentInputElement.value =
-        ">" + comments[index].text + "\n" + "\n" + comments[index].name + ",";
-      renderComments({ comments, clickLike });
-    });
-  }
   // const buttonEdit = document.querySelectorAll(".add-form-button");
   // buttonEdit.forEach((button) => {
   //   button.addEventListener("click", clickEdit);
   // });
-  const getElement = () => {
-    nameInputElement.classList.remove("error");
-    commentInputElement.classList.remove("error");
 
-    if (nameInputElement.value === "") {
-      buttonElement.disabled = true;
-      buttonElement.style.backgroundColor = "gray";
-      nameInputElement.classList.add("error");
-      return;
-    }
-    if (commentInputElement.value === "") {
-      buttonElement.disabled = true;
-      buttonElement.style.backgroundColor = "gray";
-      commentInputElement.classList.add("error");
-      return;
-    }
+  if (token) {
+    const commentInputElement = document.getElementById("comment-input");
+    const nameInputElement = document.getElementById("name-input");
+    const buttonElement = document.getElementById("add-button");
 
-    preloader.style.display = "block";
-    inputList.style.display = "none";
 
-    postTodo({
-      name: nameInputElement.value,
-      text: commentInputElement.value,
-    })
-      .then((responseData) => {
-        return getDateApi();
+
+    buttonElement.addEventListener("click", () => {
+      getElement();
+    });
+
+    nameInputElement.addEventListener("input", () => {
+      buttonElement.disabled = false;
+      buttonElement.style.backgroundColor = "";
+      nameInputElement.classList.remove("error");
+    });
+
+    commentInputElement.addEventListener("input", () => {
+      buttonElement.disabled = false;
+      buttonElement.style.backgroundColor = "";
+      commentInputElement.classList.remove("error");
+    });
+
+    const getElement = () => {
+      nameInputElement.classList.remove("error");
+      commentInputElement.classList.remove("error");
+
+      if (nameInputElement.value === "") {
+        buttonElement.disabled = true;
+        buttonElement.style.backgroundColor = "gray";
+        nameInputElement.classList.add("error");
+        return;
+      }
+      if (commentInputElement.value === "") {
+        buttonElement.disabled = true;
+        buttonElement.style.backgroundColor = "gray";
+        commentInputElement.classList.add("error");
+        return;
+      }
+
+      preloader.style.display = "block";
+      inputList.style.display = "none";
+
+      postTodo({
+        name: nameInputElement.value,
+        text: commentInputElement.value,
       })
-      .then((getDate) => {
-        preloader.style.display = "none";
-        inputList.style.display = "flex";
+        .then((responseData) => {
+          comments = responseData.comment;
+          console.log(responseData);
+          return getDateApi();
+        })
+        .then((getDate) => {
+          preloader.style.display = "none";
+          inputList.style.display = "flex";
 
-        nameInputElement.value = "";
-        commentInputElement.value = "";
-        nameInputElement.classList.remove("error");
-        commentInputElement.classList.remove("error");
-      })
-      .catch((error) => {
-        preloader.style.display = "none";
-        inputList.style.display = "flex";
+          nameInputElement.value = "";
+          commentInputElement.value = "";
+          nameInputElement.classList.remove("error");
+          commentInputElement.classList.remove("error");
+        })
+        .catch((error) => {
+          preloader.style.display = "none";
+          inputList.style.display = "flex";
 
-        if (error.message === "Сервер сломался") {
-          alert("Сервер сломался, попробуй позже");
-          return;
-        }
-        if (error.message === "Плохой запрос") {
-          alert("Имя и комментарий должны быть не короче 3 символов");
-          return;
-        }
+          if (error.message === "Сервер сломался") {
+            alert("Сервер сломался, попробуй позже");
+            return;
+          }
+          if (error.message === "Плохой запрос") {
+            alert("Имя и комментарий должны быть не короче 3 символов");
+            return;
+          }
 
-        alert("Кажется, у вас сломался интернет, попробуйте позже");
-      });
-      
-      buttonElement.addEventListener("click", getElement);
-    
+          alert("Кажется, у вас сломался интернет, попробуйте позже");
+        });
+
+      const commentElements = document.querySelectorAll(".comment");
+
+      for (const commentElement of commentElements) {
+        commentElement.addEventListener("click", () => {
+          const index = commentElement.dataset.test;
+          commentInputElement.value =
+            ">" +
+            comments[index].text +
+            "\n" +
+            "\n" +
+            comments[index].name +
+            ",";
+          renderComments({ comments, clickLike });
+        });
+      }
+
       nameInputElement.addEventListener("input", () => {
         buttonElement.disabled = false;
         buttonElement.style.backgroundColor = "";
         nameInputElement.classList.remove("error");
       });
-    
+
       commentInputElement.addEventListener("input", () => {
         buttonElement.disabled = false;
         buttonElement.style.backgroundColor = "";
         commentInputElement.classList.remove("error");
       });
-    
+
       newButton.addEventListener("click", () => {
         comments.pop();
         renderComments({ comments, clickLike });
       });
-    
+
       document.addEventListener("keyup", (event) => {
         if (event.key === "Enter") {
           getElement();
         }
       });
-  };
-}
-  
+    };
+  } else {
+    autoRegistration.addEventListener("click", () => {
+      renderLogin({ getDateApi });
+    });
+  }
 };
