@@ -106,6 +106,8 @@ export const renderComments = ({ comments, clickLike }) => {
     const nameInputElement = document.getElementById("name-input");
     const buttonElement = document.getElementById("add-button");
 
+    nameInputElement.value = userName;
+    nameInputElement.disabled = true;
 
 
     buttonElement.addEventListener("click", () => {
