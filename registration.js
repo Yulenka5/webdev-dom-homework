@@ -2,7 +2,7 @@ import { regLogin, setToken, setUserName, token, userName } from "./api.js";
 
 import { getDateApi } from "./main.js";
 import { renderLogin } from "./renderlogin.js";
-
+//
 export const renderRegictration = () => {
   const appElement = document.getElementById("app");
   const regHtml = `<div class="container">
