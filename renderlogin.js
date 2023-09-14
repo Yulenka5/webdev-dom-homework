@@ -32,7 +32,7 @@ export const renderLogin = ({ getDateApi }) => {
     </div>
   </div>
   </div>`;
-
+//
   appElement.innerHTML = loginHtml;
 
   const regPageElement = document.getElementById("reg-page");
