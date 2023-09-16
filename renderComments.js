@@ -1,6 +1,10 @@
 import { postTodo, token, userName } from "./api.js";
 import { getDateApi } from "./main.js";
 import { renderLogin } from "./renderlogin.js";
+import { format } from "date-fns";
+
+const changeDate = format(new Date(comment.date), 
+"yyyy-MM-dd hh.mm.ss");
 
 export const renderComments = ({ comments, clickLike }) => {
   const appElement = document.getElementById("app");
@@ -12,10 +16,7 @@ export const renderComments = ({ comments, clickLike }) => {
       return `<li class="comment" id="comment-new" data-test="${index}">
         <div class="comment-header">
           <div id="comment-name">${comment.name}</div>
-          <div id="comment-data">${
-            comment.date ? new Date(comment.date).toLocaleString() : ""
-          }
-            </div>
+          <div id="comment-data">${changeDate}</div>
         </div>
         <div class="comment-body">
           ${
